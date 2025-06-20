@@ -2,10 +2,11 @@
 
 local pd <const> = playdate
 
--- (1) Initialize the Roxy game engine
 import "libraries/roxy/roxy"
 
 pd.display.setRefreshRate(30)
 
--- (2) Launch the game
-roxy.new()
+import "scenes/SceneTest"
+roxy.Scene.registerScenes({ SceneTest = SceneTest })
+
+roxy.new(SceneTest)
