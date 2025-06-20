@@ -14,10 +14,12 @@ endif
 
 # List source lookup paths
 VPATH +=  \
-          source/libraries/roxy
+          source/libraries/roxy \
+          source/libraries/roxy/utilities \
 
 # List C source files here
 SRC =   \
-        source/libraries/roxy/roxy.c
+        source/libraries/roxy/roxy.c \
+        source/libraries/roxy/utilities/roxy_math.c
 
 include $(SDK)/C_API/buildsupport/common.mk
