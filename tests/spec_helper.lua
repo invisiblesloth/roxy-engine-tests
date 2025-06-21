@@ -43,17 +43,31 @@ end
 local stub = require 'luassert.stub'
 
 local sprite = { redrawBackground = stub.new() }
+local image  = { new = function() return {} end }
+
 local graphics = {
-  kColorBlack   = 0,
-  kColorWhite   = 1,
-  kDrawModeCopy = 0,
-  clear         = stub.new(),
-  setDrawOffset = stub.new(),
-  sprite        = sprite,
+  kColorBlack       = 0,
+  kColorWhite       = 1,
+  kDrawModeCopy     = 0,
+  clear             = stub.new(),
+  setDrawOffset     = stub.new(),
+  sprite            = sprite,
+  image             = image,
+  pushContext       = function() end,
+  popContext        = function() end,
+  getImageDrawMode  = function() return 0 end,
+  setImageDrawMode  = function() return 0 end,
 }
+
+local display = {
+  getRefreshRate = function() return 30 end,
+  getSize = function() return 400, 240 end,
+}
+
 _G.playdate = {
-  graphics              = graphics,
-  getSecondsSinceEpoch  = os.time,
+  graphics = graphics,
+  display = display,
+  getSecondsSinceEpoch = os.time,
 }
 
 -- --------------------------------------------------------
@@ -61,12 +75,25 @@ _G.playdate = {
 -- --------------------------------------------------------
 
 local function preprocess(src)
-  -- Rewrite “foo += bar”  →  “foo = foo + (bar)”
-  src = src:gsub("([%w_]+)%s*%+=%s*([^\n\r;]+)",
-                 "%1 = %1 + (%2)")
-  -- Rewrite “foo -= bar”  →  “foo = foo - (bar)”
-  src = src:gsub("([%w_]+)%s*-=%s*([^\n\r;]+)",
-                 "%1 = %1 - (%2)")
+
+  -- helper that patches one operator at a time
+  local function patch(op, repl)
+    -- allow dotted names (`self.state`)
+    src = src:gsub("([%w_%.]+)%s*" .. op .. "%s*([^\n\r;]+)",
+                   "%1 = %1 " .. repl .. " (%2)")
+  end
+
+  patch("%+=", "+")
+  patch("%-=", "-")
+  patch("%*=", "*")
+  patch("/=",  "/")
+  patch("//=", "//")
+  patch("%%=", "%%")
+  patch("<<=", "<<")
+  patch(">>=", ">>")
+  patch("&=", "&")
+  patch("%|=", "|")
+  patch("%^=", "^")   -- exponent, not XOR
   return src
 end
 
@@ -87,8 +114,19 @@ local function import(path)
 end
 _G.import = import
 
--- -----------------------------------------------
--- (3) Load the engine exactly like main.lua would
--- -----------------------------------------------
+-- ----------------------------------------
+-- (3) Load the engine
+-- ----------------------------------------
 
-import "libraries/roxy/roxy" -- Brings in Scene, RoxyScene, etc.
+import "libraries/roxy/roxy"
+
+-- now pull in all of the transition modules *through* import:
+import "libraries/roxy/core/modules/Transition"
+import "libraries/roxy/core/transitions/RoxyTransition"
+import "libraries/roxy/core/transitions/RoxyCutTransition"
+import "libraries/roxy/core/transitions/Cut"
+
+-- expose the classes onto your roxy table so your specs can refer to them:
+_G.roxy.RoxyTransition    = _G.RoxyTransition
+_G.roxy.RoxyCutTransition = _G.RoxyCutTransition
+_G.roxy.Cut               = _G.Cut
