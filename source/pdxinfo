@@ -2,5 +2,5 @@ name=Roxy Engine Test Suite
 author=Invisible Sloth, LLC
 description=Playground to test all the latest Roxy Engine features.
 bundleID=com.invisiblesloth.roxyenginetestsuite
-version=0.3.0
-buildNumber=9
+version=0.4.0
+buildNumber=18

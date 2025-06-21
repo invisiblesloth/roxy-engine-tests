@@ -1,4 +1,4 @@
--- source/scenes/SceneTest.lua
+-- source/scenes/TransitionTest.lua
 
 local pd        <const> = playdate
 local Graphics  <const> = pd.graphics
@@ -17,16 +17,16 @@ local CLEAR_COLOR <const> = COLOR_WHITE
 -- Class Definition & Init
 -- ----------------------------------------
 
-class("SceneTest").extends(RoxyScene)
-local scene = SceneTest
+class("TransitionTest").extends(RoxyScene)
+local scene = TransitionTest
 
 function scene:init()
   scene.super.init(self)
 
   self.inputHandlers = {
     AButtonDown = function()
-      print("Scene Test → Transition Test")
-      replaceScene(TransitionTest)
+      print("Transition Test → Scene Test")
+      replaceScene(SceneTest)
     end
   }
 end
@@ -42,7 +42,7 @@ end
 
 function scene:update(dt)
   clearScreen(CLEAR_COLOR)
-  drawText("Scene Test Scene", 20, 20)
+  drawText("Transition Test Scene", 20, 20)
 end
 
 function scene:cleanup()
