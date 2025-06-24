@@ -26,7 +26,7 @@ function scene:init()
   self.inputHandlers = {
     AButtonDown = function()
       print("Transition Test → Scene Test")
-      replaceScene(SceneTest)
+      replaceScene(SceneTest, "FadeToBlack")
     end
   }
 end

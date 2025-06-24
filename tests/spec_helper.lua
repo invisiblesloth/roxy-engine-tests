@@ -118,6 +118,72 @@ _G.import = import
 -- (3) Load the engine
 -- ----------------------------------------
 
+-- Provide a bare-bones roxy table that already contains the easing table
+_G.roxy                 = _G.roxy or {}
+_G.roxy.EasingFunctions = {}  -- must exist *now*
+_G.roxy.EasingMap       = {}  -- optional, but keeps code happy
+
+local noop = function() end
+local names = {
+  "flat","linear",
+  "inQuad","outQuad","inOutQuad","outInQuad",
+  "inCubic","outCubic","inOutCubic","outInCubic",
+  "inQuart","outQuart","inOutQuart","outInQuart",
+  "inQuint","outQuint","inOutQuint","outInQuint",
+  "inSine","outSine","inOutSine","outInSine",
+  "inExpo","outExpo","inOutExpo","outInExpo",
+  "inCirc","outCirc","inOutCirc","outInCirc",
+  "inElastic","outElastic","inOutElastic","outInElastic",
+  "inBack","outBack","inOutBack","outInBack",
+  "outBounce","inBounce","inOutBounce","outInBounce",
+}
+
+for i, name in ipairs(names) do
+  roxy.EasingFunctions[name]  = noop  -- placeholder C function
+  roxy.EasingMap[name]        = i - 1 -- any dummy numeric code
+end
+
+-- 1)  A dummy Sequencer table because RoxySequence adds / removes itself
+roxy.Sequencer = roxy.Sequencer or {}
+roxy.Sequencer.add    = function() end
+roxy.Sequencer.remove = function() end
+
+-- 2)  Stub for the C class “RoxySequenceC”
+local function makeDummyArray()
+  local arr = {}
+
+  --  tiny helpers that RoxySequence expects to call on the array…
+  function arr:addEasing(...)      end
+  function arr:from(...)           end
+  function arr:to(...)             end
+  function arr:set(...)            end
+  function arr:again(...)          end
+  function arr:reverse(...)        end
+  function arr:sleep(...)          end
+  function arr:setLoopType(...)    end
+  function arr:reset()             end
+  function arr:clear()             end
+
+  -- value fetchers - keep the signature intact
+  function arr:updateAndGetValue(_, dt)  -- oldTime, newTime, value, done
+    return 0, dt or 0, 0, true
+  end
+  function arr:getTotalDuration()  return 0 end
+  function arr:getEasingData(_, idx)        -- timestamp, from, to, dur
+    return 0, 0, 0, 0
+  end
+  function arr:isDone()            return true end
+
+  -- let “#array” return 0 so the high-level code thinks it’s empty
+  return setmetatable(arr, { __len = function() return 0 end })
+end
+
+-- The “C constructor”
+_G.RoxySequenceC = {
+  new = function() return makeDummyArray() end
+}
+
+-- Import Roxy just like you would in main.lua
 import "libraries/roxy/roxy"
 
 -- now pull in all of the transition modules *through* import:
