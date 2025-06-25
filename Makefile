@@ -23,6 +23,7 @@ SRC =   \
         source/libraries/roxy/roxy.c \
         source/libraries/roxy/utilities/roxy_math.c \
         source/libraries/roxy/utilities/roxy_ease.c \
+        source/libraries/roxy/core/modules/roxy_input.c \
         source/libraries/roxy/core/sequences/roxy_sequence.c
 
 include $(SDK)/C_API/buildsupport/common.mk
