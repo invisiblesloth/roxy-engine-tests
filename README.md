@@ -1,6 +1,6 @@
-# Roxy Engine Tests
+# Roxy Engine Test Suite
 
-Unit tests for [Roxy](https://github.com/invisiblesloth/roxy-engine). This project template includes the engine as a submodule and unit tests for each Roxy Engine module and feature.
+Unit and integration tests for [Roxy](https://github.com/invisiblesloth/roxy-engine). This project template includes the engine as a submodule.
 
 > **Note:** Roxy is currently in pre-release. Features and APIs may evolve before version 1.0.
 
@@ -10,7 +10,7 @@ Unit tests for [Roxy](https://github.com/invisiblesloth/roxy-engine). This proje
 
 Questions or feedback? Contact us at [support@invisiblesloth.com](mailto:support@invisiblesloth.com). We would love to hear about your experience using Roxy!
 
-## License ✅
+## License ⚖️
 
 This project is licensed under the MIT License.
 

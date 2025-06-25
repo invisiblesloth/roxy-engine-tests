@@ -10,9 +10,6 @@ local min <const> = math.min
 local insertTable <const> = table.insert
 local removeTable <const> = table.remove
 
-local pushHandler <const> = pd.inputHandlers.push
-local popHandler  <const> = pd.inputHandlers.pop
-
 local clearScreen <const> = Graphics.clear
 local drawText    <const> = Graphics.drawText
 
@@ -68,7 +65,6 @@ end
 
 function scene:enter()
   scene.super.enter(self)
-  -- pushHandler(self.inputHandler)
 
   if not self.testsRun then
     self:runTests()
@@ -92,8 +88,6 @@ end
 
 function scene:cleanup()
   scene.super.cleanup(self)
-  -- popHandler()
-  -- self.inputHandler = nil
 end
 
 -- ----------------------------------------

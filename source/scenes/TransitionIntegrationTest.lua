@@ -12,9 +12,6 @@ local min <const> = math.min
 local insertTable  <const> = table.insert
 local removeTable  <const> = table.remove
 
-local pushHandler <const> = pd.inputHandlers.push
-local popHandler  <const> = pd.inputHandlers.pop
-
 local clearScreen <const> = Graphics.clear
 local drawText    <const> = Graphics.drawText
 
@@ -86,8 +83,7 @@ end
 
 function scene:enter()
   scene.super.enter(self)
-  -- pushHandler(self.inputHandler)
-  
+
   if not self.testsRun then
     self:runTests()
     self.testsRun = true
@@ -96,7 +92,7 @@ end
 
 function scene:update(dt)
   clearScreen(CLEAR_COLOR)
-  
+
   -- Draw log
   local y = 10
   for i = self.index, min(#logLines, self.index + 17) do
@@ -110,8 +106,6 @@ end
 
 function scene:cleanup()
   scene.super.cleanup(self)
-  -- popHandler()
-  -- self.inputHandler = nil
 end
 
 -- ----------------------------------------
@@ -141,7 +135,7 @@ function scene:runTests()
   Transition.replaceScene(CClass, "ThisDoesNotExist")
   expect(Scene.getCurrentScene() == C, "Unknown transition falls back to Cut")
   expect(C._entered, "C:enter() called")
-  
+
   -- (5) FadeToBlack (animated) transition
   Transition.replaceScene(BClass, "FadeToBlack", 0.1, 0.05)
   expect(Transition.isTransitioning, "FadeToBlack starts transitioning")
@@ -151,27 +145,27 @@ function scene:runTests()
   end
   expect(Scene.getCurrentScene()==B, "FadeToBlack finishes and switches to B")
   expect(not Transition.isTransitioning, "FadeToBlack resets isTransitioning")
-  
+
   -- (6) Default‐name fallback
   Transition.pushScene(CClass)  -- no name → should default to Cut
   expect(Scene.getCurrentScene()==C, "pushScene() no name falls back to Cut")
-  
+
   -- (7) popScene default‐name
-  Transition.popScene()         
+  Transition.popScene()
   expect(Scene.getCurrentScene()==B, "popScene() no name --> Cut pop")
-  
+
   -- (8a) loadTransitions rejects non-table
   local ok1 = not pcall(Transition.loadTransitions, "not a table")
   expect(ok1, "loadTransitions rejects non-table")
-  
+
   -- (8b) loadTransitions rejects bad-key
   local ok2 = not pcall(Transition.loadTransitions, { [123]=RoxyCutTransition })
   expect(ok2, "loadTransitions rejects non-string key")
-  
+
   -- (8c) loadTransitions rejects bad-value
   local ok3 = not pcall(Transition.loadTransitions, { Foo="not a class" })
   expect(ok3, "loadTransitions rejects non-class value")
-  
+
   -- (9) reentrancy guard
   Transition.replaceScene(AClass, "FadeToBlack", 0.2)
   Transition.popScene("FadeToBlack", 0.2)

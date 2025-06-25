@@ -1,8 +1,8 @@
-Licenses
+# Licenses
 
---
+---
 
-Roxy Engine Tests
+## Roxy Game Engine
 
 MIT License
 
@@ -29,8 +29,10 @@ SOFTWARE.
 
 --
 
-Roxy Engine License
+## Roxy Engine License
 
-This template uses the Roxy Game Engine as a submodule. The Roxy Game
-Engine is licensed under the MIT License. Please refer to the `roxy-engine`
-repository for its full license information.
+This project uses the Roxy Game Engine as a Git submodule. The engine is
+licensed under the MIT License. Please refer to the Roxy Engine repository for
+full license terms, including third-party attributions and inspirations.
+
+
