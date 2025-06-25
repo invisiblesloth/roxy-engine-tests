@@ -3,7 +3,7 @@
 class('Dummy').extends(RoxyScene)
 
 function Dummy:init(name, opts)
-  Dummy.super.init(self)
+  Dummy.super.init(self, background)
   self.name             = name or 'Dummy'
   self.alwaysUpdate     = opts and opts.alwaysUpdate
   self.updateBackground = opts and opts.updateBackground
