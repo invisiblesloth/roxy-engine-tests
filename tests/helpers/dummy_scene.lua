@@ -3,6 +3,7 @@
 class('Dummy').extends(RoxyScene)
 
 function Dummy:init(name, opts)
+  opts = opts or {}
   local background = opts.background or nil
   Dummy.super.init(self, background)
   self.name             = name or 'Dummy'
