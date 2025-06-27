@@ -44,6 +44,10 @@ local graphics = {
   kColorBlack         = 0,
   kColorWhite         = 1,
   kDrawModeCopy       = 0,
+  kImageUnflipped     = 0,
+  kImageFlippedX      = 1,
+  kImageFlippedY      = 2,
+  kImageFlippedXY     = 3,
   setBackgroundColor  = noop,
   setColor            = spy.new(function() end),
   fillRect            = spy.new(function() end),
@@ -51,6 +55,7 @@ local graphics = {
   clear               = noop,
   setDrawOffset       = noop,
   image               = { new = function() return {} end },
+  imagetable          = { new = function() return {} end },
   pushContext         = noop,
   popContext          = noop,
   getImageDrawMode    = function() return 0 end,
@@ -58,6 +63,14 @@ local graphics = {
 }
 
 local sprite = {
+  init                          = noop,
+  add                           = noop,
+  remove                        = noop,
+  setZIndex                     = noop,
+  setSize                       = noop,
+  setCenter                     = noop,
+  moveTo                        = noop,
+  markDirty                     = noop,
   setBackgroundDrawing          = noop,
   setBackgroundDrawingCallback  = noop,
   redrawBackground              = noop,
@@ -69,6 +82,10 @@ local display = {
   getSize        = function() return 400, 240 end,
 }
 
+local timer = {
+  performAfterDelay = noop,
+}
+
 local ui = {
   crankIndicator = noop,
 }
@@ -78,6 +95,7 @@ _G.playdate = {
   graphics              = graphics,
   sprite                = sprite,
   display               = display,
+  timer                 = timer,
   ui                    = ui,
   getSecondsSinceEpoch  = os.time,
   inputHandlers = {
@@ -131,11 +149,9 @@ _G.roxy = _G.roxy or {}
 -- Input
 _G.__testProcessMask  = 0
 _G.__testButtonState  = 0
-
 -- make wrappers that read the globals above
 local function processAllButtonsWrapper() return __testProcessMask  end
 local function getButtonStateWrapper()    return __testButtonState  end
-
 -- expose so Input.lua captures them
 _G.roxy.Input = _G.roxy.Input or {}
 _G.roxy.Input.processAllButtons = processAllButtonsWrapper
@@ -143,10 +159,27 @@ _G.roxy.Input.setButtonHoldBufferAmount = noop
 _G.roxy.Input.flushButtonQueue = noop
 _G.playdate.getButtonState = getButtonStateWrapper
 
+-- Math
+-- Truncate decimal (like C's truncf)
+local function truncateDecimal(x)
+  if x >= 0 then return math.floor(x)
+  else return math.ceil(x)
+  end
+end
+-- Clamp, handling swapped bounds like your C version
+local function clamp(val, lower, upper)
+  if lower > upper then lower, upper = upper, lower end
+  if val < lower then return lower end
+  if val > upper then return upper end
+  return val
+end
+_G.roxy.Math = _G.roxy.Math or {}
+_G.roxy.Math.clamp = clamp
+_G.roxy.Math.truncateDecimal = truncateDecimal
+
 -- Easing
 _G.roxy.EasingFunctions = {}
 _G.roxy.EasingMap = {}
-
 -- Populate easing names
 local easingNames = {
   "flat","linear",
@@ -170,9 +203,8 @@ end
 _G.roxy.Sequencer = roxy.Sequencer or {}
 _G.roxy.Sequencer.add     = noop
 _G.roxy.Sequencer.remove  = noop
-
 -- C-side dummy RoxySequenceC
-local function makeDummyArray()
+local function makeDummySequenceArray()
   local arr = {}
   function arr:addEasing(...) end
   function arr:from(...) end
@@ -190,8 +222,12 @@ local function makeDummyArray()
   function arr:isDone() return true end
   return setmetatable(arr, { __len = function() return 0 end })
 end
+_G.RoxySequenceC = { new = function() return makeDummySequenceArray() end }
 
-_G.RoxySequenceC = { new = function() return makeDummyArray() end }
+-- Animation
+_G.roxy.Animation = roxy.Animation or {}
+-- C-side dummy updateAnimation
+_G.updateAnimation = { update = noop }
 
 -- ----------------------------------------
 -- (4) Load the engine

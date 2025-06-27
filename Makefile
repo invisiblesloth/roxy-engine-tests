@@ -15,15 +15,18 @@ endif
 # List source lookup paths
 VPATH +=  \
           source/libraries/roxy \
-          source/libraries/roxy/utilities \
-          source/libraries/roxy/core/sequences
+          source/libraries/roxy/core/animations \
+          source/libraries/roxy/core/modules \
+          source/libraries/roxy/core/sequences \
+          source/libraries/roxy/utilities
 
 # List C source files here
 SRC =   \
         source/libraries/roxy/roxy.c \
-        source/libraries/roxy/utilities/roxy_math.c \
-        source/libraries/roxy/utilities/roxy_ease.c \
+        source/libraries/roxy/core/animations/roxy_animation.c \
         source/libraries/roxy/core/modules/roxy_input.c \
-        source/libraries/roxy/core/sequences/roxy_sequence.c
+        source/libraries/roxy/core/sequences/roxy_sequence.c \
+        source/libraries/roxy/utilities/roxy_ease.c \
+        source/libraries/roxy/utilities/roxy_math.c
 
 include $(SDK)/C_API/buildsupport/common.mk

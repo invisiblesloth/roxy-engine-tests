@@ -1,18 +1,18 @@
 -- source/scenes/InputIntegrationTest.lua
 
-local pd        <const> = playdate
-local Graphics  <const> = pd.graphics
-local Scene     <const> = roxy.Scene
-local Input     <const> = roxy.Input
+local pd <const> = playdate
+local Graphics <const> = pd.graphics
+local Scene <const> = roxy.Scene
+local Input <const> = roxy.Input
 
 local max <const> = math.max
 local min <const> = math.min
 
-local insertTable <const> = table.insert
-local removeTable <const> = table.remove
+local tableInsert <const> = table.insert
+local tableRemove <const> = table.remove
 
 local clearScreen <const> = Graphics.clear
-local drawText    <const> = Graphics.drawText
+local drawText <const> = Graphics.drawText
 
 local COLOR_WHITE <const> = Graphics.kColorWhite
 local CLEAR_COLOR <const> = COLOR_WHITE
@@ -24,11 +24,11 @@ local CLEAR_COLOR <const> = COLOR_WHITE
 local logLines = {}
 
 local function ok(msg)
-  insertTable(logLines, "✔️ " .. msg)
+  tableInsert(logLines, "✔️ " .. msg)
 end
 
 local function fail(msg)
-  insertTable(logLines, "❌ " .. msg)
+  tableInsert(logLines, "❌ " .. msg)
 end
 
 local function expect(cond, msg)
@@ -36,7 +36,7 @@ local function expect(cond, msg)
 end
 
 local function pruneLog()
-  if #logLines > 60 then removeTable(logLines, 1) end
+  if #logLines > 60 then tableRemove(logLines, 1) end
 end
 
 -- ----------------------------------------
@@ -48,9 +48,9 @@ local scene = InputIntegrationTest
 
 function scene:init()
   scene.super.init(self)
-  self.index     = 1
-  self.done      = false
-  self.testsRun  = false
+  self.index    = 1
+  self.done     = false
+  self.testsRun = false
 end
 
 -- ----------------------------------------
@@ -119,20 +119,23 @@ function scene:runTests()
   expect(#Input.listHandlers() == 2, "resumeAutoFlush() kept registry intact & flushed")
 
   -- (3) makeModalHandler fills all keys
-  local partial = { AButtonDown = function() end }
-  local modal   = Input.makeModalHandler(partial)
-  local expectedKeys = {
-    "AButtonDown","AButtonHeld","AButtonUp","AButtonHold",
-    "BButtonDown","BButtonHeld","BButtonUp","BButtonHold",
-    "downButtonDown","downButtonUp","downButtonHold",
-    "leftButtonDown","leftButtonUp","leftButtonHold",
-    "rightButtonDown","rightButtonUp","rightButtonHold",
-    "upButtonDown","upButtonUp","upButtonHold",
-    "cranked","crankDocked","crankUndocked"
+  local partial       = { AButtonDown = function() end }
+  local modal         = Input.makeModalHandler(partial)
+  local expectedKeys  = {
+    "AButtonDown", "AButtonHeld", "AButtonUp", "AButtonHold",
+    "BButtonDown", "BButtonHeld", "BButtonUp", "BButtonHold",
+    "downButtonDown", "downButtonUp", "downButtonHold",
+    "leftButtonDown", "leftButtonUp", "leftButtonHold",
+    "rightButtonDown", "rightButtonUp", "rightButtonHold",
+    "upButtonDown", "upButtonUp", "upButtonHold",
+    "cranked", "crankDocked", "crankUndocked"
   }
   local allKeysFilled = true
   for _, k in ipairs(expectedKeys) do
-    if modal[k] == nil then allKeysFilled = false break end
+    if modal[k] == nil then
+      allKeysFilled = false
+      break
+    end
   end
   expect(allKeysFilled, "makeModalHandler() back‑fills missing callbacks")
 
