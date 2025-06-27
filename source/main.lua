@@ -17,6 +17,8 @@ import "scenes/CameraIntegrationTest"
 import "scenes/RoxySpriteIntegrationTest"
 import "scenes/RoxyAnimationIntegrationTest"
 import "scenes/RoxyActorIntegrationTest"
+import "scenes/CacheIntegrationTest"
+import "scenes/AssetsIntegrationTest"
 r.Scene.registerScenes({
   SceneTest = SceneTest,
   TransitionTest = TransitionTest,
@@ -28,6 +30,8 @@ r.Scene.registerScenes({
   RoxySpriteIntegrationTest = RoxySpriteIntegrationTest,
   RoxyAnimationIntegrationTest = RoxyAnimationIntegrationTest,
   RoxyActorIntegrationTest = RoxyActorIntegrationTest,
+  CacheIntegrationTest = CacheIntegrationTest,
+  AssetsIntegrationTest = AssetsIntegrationTest
 })
 
-r.new(RoxyActorIntegrationTest)
+r.new(AssetsIntegrationTest)

@@ -101,9 +101,9 @@ describe("RoxyActor (logic unit tests)", function()
 
   it("updatePhysics chooses idle / run / jump / fall", function()
     -- helper to reset and check state quickly
-    local function expectState(props, expected)
+    local function expectState(opts, expected)
       actor.currentState = "idle"
-      actor:updatePhysics(props)
+      actor:updatePhysics(opts)
       assert.equals(expected, actor.currentState)
     end
 
