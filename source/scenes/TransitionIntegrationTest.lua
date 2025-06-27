@@ -2,18 +2,18 @@
 
 -- Integration-style checks for roxy.Transition (Cut/Fallback paths).
 
-local pd          <const> = playdate
-local Graphics    <const> = pd.graphics
-local Scene       <const> = roxy.Scene
-local Transition  <const> = roxy.Transition
+local pd <const> = playdate
+local Graphics <const> = pd.graphics
+local Scene <const> = roxy.Scene
+local Transition <const> = roxy.Transition
 
 local min <const> = math.min
 
-local insertTable  <const> = table.insert
-local removeTable  <const> = table.remove
+local tableInsert <const> = table.insert
+local tableRemove <const> = table.remove
 
 local clearScreen <const> = Graphics.clear
-local drawText    <const> = Graphics.drawText
+local drawText <const> = Graphics.drawText
 
 local COLOR_WHITE <const> = Graphics.kColorWhite
 local CLEAR_COLOR <const> = COLOR_WHITE
@@ -25,34 +25,42 @@ local CLEAR_COLOR <const> = COLOR_WHITE
 local logLines = {}
 
 local function ok(msg)
-  insertTable(logLines, "✔️ " .. msg)
+  tableInsert(logLines, "✔️ " .. msg)
 end
 
 local function fail(msg)
-  insertTable(logLines, "❌ " .. msg)
+  tableInsert(logLines, "❌ " .. msg)
 end
 
 local function expect(cond, msg)
   if cond then
-    ok(msg) else fail(msg)
+    ok(msg)
+  else
+    fail(msg)
   end
 end
 
 local function pruneLog()
   if #logLines > 60 then
-    removeTable(logLines,1)
+    tableRemove(logLines, 1)
   end
 end
 
 -- Dummy-scene factory
 local function makeScene(name)
   local scene = { name = name }
-  function scene:enter()    self._entered  = true end
-  function scene:pause()    self._paused   = true end
-  function scene:update()                         end
-  function scene:resume()   self._resumed  = true end
-  function scene:exit()     self._exited   = true end
-  function scene:cleanup()  self._cleaned  = true end
+  function scene:enter() self._entered = true end
+
+  function scene:pause() self._paused = true end
+
+  function scene:update() end
+
+  function scene:resume() self._resumed = true end
+
+  function scene:exit() self._exited = true end
+
+  function scene:cleanup() self._cleaned = true end
+
   return scene
 end
 local A, B, C = makeScene("A"), makeScene("B"), makeScene("C")
@@ -141,29 +149,29 @@ function scene:runTests()
   expect(Transition.isTransitioning, "FadeToBlack starts transitioning")
   -- drive the sequencer until it ends
   while Transition.isTransitioning do
-   roxy.Sequencer.update(0.1)
+    roxy.Sequencer.update(0.1)
   end
-  expect(Scene.getCurrentScene()==B, "FadeToBlack finishes and switches to B")
+  expect(Scene.getCurrentScene() == B, "FadeToBlack finishes and switches to B")
   expect(not Transition.isTransitioning, "FadeToBlack resets isTransitioning")
 
   -- (6) Default‐name fallback
-  Transition.pushScene(CClass)  -- no name → should default to Cut
-  expect(Scene.getCurrentScene()==C, "pushScene() no name falls back to Cut")
+  Transition.pushScene(CClass) -- no name → should default to Cut
+  expect(Scene.getCurrentScene() == C, "pushScene() no name falls back to Cut")
 
   -- (7) popScene default‐name
   Transition.popScene()
-  expect(Scene.getCurrentScene()==B, "popScene() no name --> Cut pop")
+  expect(Scene.getCurrentScene() == B, "popScene() no name --> Cut pop")
 
   -- (8a) loadTransitions rejects non-table
   local ok1 = not pcall(Transition.loadTransitions, "not a table")
   expect(ok1, "loadTransitions rejects non-table")
 
   -- (8b) loadTransitions rejects bad-key
-  local ok2 = not pcall(Transition.loadTransitions, { [123]=RoxyCutTransition })
+  local ok2 = not pcall(Transition.loadTransitions, { [123] = RoxyCutTransition })
   expect(ok2, "loadTransitions rejects non-string key")
 
   -- (8c) loadTransitions rejects bad-value
-  local ok3 = not pcall(Transition.loadTransitions, { Foo="not a class" })
+  local ok3 = not pcall(Transition.loadTransitions, { Foo = "not a class" })
   expect(ok3, "loadTransitions rejects non-class value")
 
   -- (9) reentrancy guard

@@ -1,17 +1,17 @@
 -- source/scenes/SceneIntegrationTest.lua
 
-local pd        <const> = playdate
-local Graphics  <const> = pd.graphics
-local Scene     <const> = roxy.Scene
+local pd <const> = playdate
+local Graphics <const> = pd.graphics
+local Scene <const> = roxy.Scene
 
 local max <const> = math.max
 local min <const> = math.min
 
-local insertTable <const> = table.insert
-local removeTable <const> = table.remove
+local tableInsert <const> = table.insert
+local tableRemove <const> = table.remove
 
 local clearScreen <const> = Graphics.clear
-local drawText    <const> = Graphics.drawText
+local drawText <const> = Graphics.drawText
 
 local COLOR_WHITE <const> = Graphics.kColorWhite
 local CLEAR_COLOR <const> = COLOR_WHITE
@@ -23,22 +23,24 @@ local CLEAR_COLOR <const> = COLOR_WHITE
 local logLines = {}
 
 local function ok(msg)
-  insertTable(logLines, "✔️ " .. msg)
+  tableInsert(logLines, "✔️ " .. msg)
 end
 
 local function fail(msg)
-  insertTable(logLines, "❌ " .. msg)
+  tableInsert(logLines, "❌ " .. msg)
 end
 
 local function expect(cond, msg)
   if cond then
-    ok(msg) else fail(msg)
+    ok(msg)
+  else
+    fail(msg)
   end
 end
 
 local function pruneLog()
   if #logLines > 60 then
-    removeTable(logLines,1)
+    tableRemove(logLines, 1)
   end
 end
 
@@ -86,35 +88,42 @@ function scene:update(dt)
   end
 end
 
-function scene:cleanup()
-  scene.super.cleanup(self)
-end
-
 -- ----------------------------------------
 -- Integration Tests
 -- ----------------------------------------
 
 function scene:runTests()
   -- Simple dummy scenes
-  local A = { name="A" }
-  function A:enter()    self._entered = true  end
-  function A:pause()    self._paused  = true  end
-  function A:update()                         end
-  function A:resume()   self._resumed = true  end
-  function A:exit()     self._exited  = true  end
-  function A:cleanup()  self._cleaned = true  end
+  local A = { name = "A" }
+  function A:enter() self._entered = true end
 
-  local B = { name="B" }
-  function B:enter()    self._entered = true  end
-  function B:pause()    self._paused  = true  end
-  function B:update()                         end
-  function B:resume()   self._resumed = true  end
-  function B:exit()     self._exited  = true  end
-  function B:cleanup()  self._cleaned = true  end
+  function A:pause() self._paused = true end
 
-  local C = { name="C" }
-  function C:enter()    self._entered = true  end
-  function C:update()                         end
+  function A:update() end
+
+  function A:resume() self._resumed = true end
+
+  function A:exit() self._exited = true end
+
+  function A:cleanup() self._cleaned = true end
+
+  local B = { name = "B" }
+  function B:enter() self._entered = true end
+
+  function B:pause() self._paused = true end
+
+  function B:update() end
+
+  function B:resume() self._resumed = true end
+
+  function B:exit() self._exited = true end
+
+  function B:cleanup() self._cleaned = true end
+
+  local C = { name = "C" }
+  function C:enter() self._entered = true end
+
+  function C:update() end
 
   -- (1) Clear stack
   while Scene.getStackDepth() > 0 do
