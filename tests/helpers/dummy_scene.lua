@@ -3,6 +3,7 @@
 class('Dummy').extends(RoxyScene)
 
 function Dummy:init(name, opts)
+  local background = opts.background or nil
   Dummy.super.init(self, background)
   self.name             = name or 'Dummy'
   self.alwaysUpdate     = opts and opts.alwaysUpdate
@@ -21,7 +22,7 @@ function Dummy:pause()
   -- call base first; it returns early if already paused
   local wasPaused = self.isPaused -- store flag
   Dummy.super.pause(self)
-  if not wasPaused then -- only bump on first real pause
+  if not wasPaused then           -- only bump on first real pause
     bump(self, 'pause')
   end
 end
@@ -36,12 +37,12 @@ end
 
 function Dummy:exit()
   Dummy.super.exit(self)
-  bump(self,'exit')
+  bump(self, 'exit')
 end
 
 function Dummy:cleanup()
   Dummy.super.cleanup(self)
-  bump(self,'cleanup')
+  bump(self, 'cleanup')
 end
 
 return Dummy
