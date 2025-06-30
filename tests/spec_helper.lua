@@ -56,6 +56,7 @@ local graphics = {
   setDrawOffset       = noop,
   image               = { new = function() return {} end },
   imagetable          = { new = function() return {} end },
+  tilemap             = { new = function() return {} end },
   pushContext         = noop,
   popContext          = noop,
   getImageDrawMode    = function() return 0 end,
@@ -104,6 +105,14 @@ _G.playdate = {
   }
 }
 
+-- JSON
+_G.json = {
+  decodeFile    = noop,
+  encode        = noop,
+  encodePretty  = noop,
+  encodeToFile  = noop,
+}
+
 -- ----------------------------------------
 -- (2) Playdate-style import (handles += etc.)
 -- ----------------------------------------
@@ -146,18 +155,8 @@ _G.import = import
 
 _G.roxy = _G.roxy or {}
 
--- Input
-_G.__testProcessMask  = 0
-_G.__testButtonState  = 0
--- make wrappers that read the globals above
-local function processAllButtonsWrapper() return __testProcessMask  end
-local function getButtonStateWrapper()    return __testButtonState  end
--- expose so Input.lua captures them
-_G.roxy.Input = _G.roxy.Input or {}
-_G.roxy.Input.processAllButtons = processAllButtonsWrapper
-_G.roxy.Input.setButtonHoldBufferAmount = noop
-_G.roxy.Input.flushButtonQueue = noop
-_G.playdate.getButtonState = getButtonStateWrapper
+-- JSON
+-- _G.roxy.JSON = _G.roxy.JSON or {}
 
 -- Math
 -- Truncate decimal (like C's truncf)
@@ -198,6 +197,19 @@ for i, name in ipairs(easingNames) do
   roxy.EasingFunctions[name] = noop
   roxy.EasingMap[name] = i - 1
 end
+
+-- Input
+_G.__testProcessMask  = 0
+_G.__testButtonState  = 0
+-- make wrappers that read the globals above
+local function processAllButtonsWrapper() return __testProcessMask  end
+local function getButtonStateWrapper()    return __testButtonState  end
+-- expose so Input.lua captures them
+_G.roxy.Input = _G.roxy.Input or {}
+_G.roxy.Input.processAllButtons = processAllButtonsWrapper
+_G.roxy.Input.setButtonHoldBufferAmount = noop
+_G.roxy.Input.flushButtonQueue = noop
+_G.playdate.getButtonState = getButtonStateWrapper
 
 -- Sequencer
 _G.roxy.Sequencer = roxy.Sequencer or {}

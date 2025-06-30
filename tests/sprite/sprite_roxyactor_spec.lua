@@ -1,5 +1,4 @@
--- tests/actor/actor_roxyactor_spec.lua
--- Focus on pure‑Lua logic; minimal Playdate stubbing.
+-- tests/actor/sprite_roxyactor_spec.lua
 
 dofile("tests/spec_helper.lua")
 local spy = require("luassert.spy")
@@ -8,24 +7,11 @@ describe("RoxyActor (logic unit tests)", function()
   local RoxyActor
   local actor
 
-  ---------------------------------------------------------------------------
-  -- Test‑level scaffolding --------------------------------------------------
-  ---------------------------------------------------------------------------
+  -----------------------------------------
+  -- Test‑level scaffolding
+  -----------------------------------------
   before_each(function()
-    -- ── Stub a super‑simple RoxySprite base (if not already defined) ──────
-    if not _G.RoxySprite then
-      class("RoxySprite").extends()
-      function RoxySprite:init() self.isRoxySprite = true end
-      function RoxySprite:markDirty() end
-      function RoxySprite:flipX() end
-      function RoxySprite:unflip() end
-      function RoxySprite:setView(...)      -- provide dummy animation container
-        self.animation = {currentAnimation = {startFrame = 1, loop = true}, animations = {}}
-      end
-      function RoxySprite:update() end
-    end
-
-    -- ── Dummy RoxyAnimation (just to satisfy setAnimation) ────────────────
+    -- Dummy RoxyAnimation (just to satisfy setAnimation)
     if not _G.RoxyAnimation then
       class("RoxyAnimation").extends()
       function RoxyAnimation:init() end
@@ -45,9 +31,9 @@ describe("RoxyActor (logic unit tests)", function()
     actor.animations = { idle = {}, run = {}, jump = {}, fall = {}, atk = {} }
   end)
 
-  ---------------------------------------------------------------------------
-  -- Specs ------------------------------------------------------------------
-  ---------------------------------------------------------------------------
+  -----------------------------------------
+  -- Specs
+  -----------------------------------------
 
   it("setState changes currentState and marks dirty", function()
     local dirtySpy = spy.on(actor, "markDirty")

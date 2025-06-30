@@ -1,0 +1,34 @@
+{
+  "width": 2,
+  "height": 2,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "parallaxoriginx": "0",
+  "parallaxoriginy": "0",
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "tilecount": 6,
+      "name":"sm-bubbles",
+      "image": "..\/images\/sm-bubbles-table-16-16.png"
+    }
+  ],
+  "layers": [
+    {
+      "type": "tilelayer",
+      "name": "layer1",
+      "width": 2,
+      "height": 2,
+      "data": [1,0,2,0],
+      "offsetx": 0,
+      "offsety": 0
+    },
+    {
+      "type": "objectgroup",
+      "name": "obj1",
+      "objects": [
+        { "id": 1, "x": 10, "y": 20 }
+      ]
+    }
+  ]
+}

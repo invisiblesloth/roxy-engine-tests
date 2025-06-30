@@ -3,7 +3,6 @@
 local pd        <const> = playdate
 local Graphics  <const> = pd.graphics
 local Sprite    <const> = Graphics.sprite
-local r         <const> = roxy
 
 local tableInsert <const> = table.insert
 local tableRemove <const> = table.remove
